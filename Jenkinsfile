@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'node:18-bullseye'
+                    image 'node:18-alpine'
                     reuseNode true
                 }
             }
@@ -18,14 +18,13 @@ pipeline {
                     npm run build
                     ls -la
                 '''
-                stash includes: 'build/**', name: 'build-artifacts'
             }
         }
 
         stage('Test') {
             agent {
                 docker {
-                    image 'node:18-bullseye'
+                    image 'node:18-alpine'
                     reuseNode true
                 }
             }
@@ -35,8 +34,13 @@ pipeline {
                     test -f build/index.html
                     npm test
                 '''
-                stash includes: 'build/**', name: 'build-artifacts'
             }
+        }
+    }
+
+    post {
+        always {
+            junit 'test-results/junit.xml'
         }
     }
 }
