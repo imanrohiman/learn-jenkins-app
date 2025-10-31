@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'node:18-bullseye'
+                    -- image 'node:18-bullseye'
                     reuseNode true
                 }
             }
@@ -18,6 +18,7 @@ pipeline {
                     npm run build
                     ls -la
                 '''
+                stash includes: 'build/**', name: 'build-artifacts'
             }
         }
 
@@ -34,6 +35,7 @@ pipeline {
                     test -f build/index.html
                     npm test
                 '''
+                stash includes: 'build/**', name: 'build-artifacts'
             }
         }
     }
